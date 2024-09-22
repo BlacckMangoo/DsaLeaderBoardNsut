@@ -16,6 +16,9 @@ body {
   padding: 20px;
   color: white;
   text-align: center;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
 }
 
 .App-title {
@@ -23,18 +26,35 @@ body {
   font-size: 24px;
 }
 
+.user-info {
+  display: flex;
+  align-items: center;
+}
+
+.user-info span {
+  margin-right: 10px;
+}
+
+.user-info button {
+  padding: 5px 10px;
+  background-color: #e74c3c;
+  color: white;
+  border: none;
+  border-radius: 3px;
+  cursor: pointer;
+}
+
 .App-content {
   flex: 1;
   padding: 20px;
 }
 
-/* Add some basic responsiveness */
 @media (max-width: 600px) {
   .App-header {
-    padding: 10px;
+    flex-direction: column;
   }
 
-  .App-title {
-    font-size: 20px;
+  .user-info {
+    margin-top: 10px;
   }
 }

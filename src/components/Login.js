@@ -1,73 +1,76 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import GoogleLogin from './GoogleLogin';
+import { useAuth } from '../AuthContext';
 import './Login.css';
 
-function Login({ addUser }) {
+function Login() {
   const [email, setEmail] = useState('');
   const [name, setName] = useState('');
-  const [rollNumber, setRollNumber] = useState('');
-  const [dsaScore, setDsaScore] = useState('');
+  const [error, setError] = useState('');
   const navigate = useNavigate();
+  const { login } = useAuth();
 
-  const handleSubmit = (e) => {
+  const handleLoginSuccess = (user) => {
+    console.log('Login successful:', user);
+    try {
+      login(user);
+      navigate('/profile');
+    } catch (error) {
+      console.error('Error during login:', error);
+      setError('An unexpected error occurred. Please try again.');
+    }
+  };
+
+  const handleGoogleLoginSuccess = (googleUser) => {
+    console.log('Google login successful:', googleUser);
+    handleLoginSuccess(googleUser);
+  };
+
+  const handleEmailSubmit = (e) => {
     e.preventDefault();
-    const newUser = { 
-      email, 
-      name, 
-      rollNumber,
-      dsaScore: parseInt(dsaScore, 10) 
-    };
-    addUser(newUser);
-    navigate('/leaderboard');
+    console.log('Attempting email login with:', { email, name });
+    setError(''); // Clear any previous errors
+
+    if (email.endsWith('@nsut.ac.in')) {
+      handleLoginSuccess({ email, name, dsaScore: 0 }); // Initialize dsaScore to 0
+    } else {
+      console.warn('Invalid email domain:', email);
+      setError('Please use your NSUT email to login.');
+    }
   };
 
   return (
     <div className="login-container">
-      <h1>DSA Leaderboard Login</h1>
-      <form onSubmit={handleSubmit} className="login-form">
-        <div className="form-group">
-          <label htmlFor="email">Email:</label>
-          <input
-            type="email"
-            id="email"
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
-            required
-          />
+      <h1>Sign in</h1>
+      {error && <div className="error-message">{error}</div>}
+      <div className="login-options">
+        <div className="google-login">
+          <h2>Sign in with Google</h2>
+          <GoogleLogin onLoginSuccess={handleGoogleLoginSuccess} />
         </div>
-        <div className="form-group">
-          <label htmlFor="name">Name:</label>
-          <input
-            type="text"
-            id="name"
-            value={name}
-            onChange={(e) => setName(e.target.value)}
-            required
-          />
+        <div className="divider">OR</div>
+        <div className="email-login">
+          <h2>Sign in with Email</h2>
+          <form onSubmit={handleEmailSubmit}>
+            <input
+              type="email"
+              placeholder="Enter your NSUT email"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              required
+            />
+            <input
+              type="text"
+              placeholder="Enter your name"
+              value={name}
+              onChange={(e) => setName(e.target.value)}
+              required
+            />
+            <button type="submit">Sign In with Email</button>
+          </form>
         </div>
-        <div className="form-group">
-          <label htmlFor="rollNumber">Roll Number:</label>
-          <input
-            type="text"
-            id="rollNumber"
-            value={rollNumber}
-            onChange={(e) => setRollNumber(e.target.value)}
-            required
-          />
-        </div>
-        <div className="form-group">
-          <label htmlFor="dsaScore">DSA Score:</label>
-          <input
-            type="number"
-            id="dsaScore"
-            value={dsaScore}
-            onChange={(e) => setDsaScore(e.target.value)}
-            required
-            min="0"
-          />
-        </div>
-        <button type="submit" className="login-button">Login</button>
-      </form>
+      </div>
     </div>
   );
 }
