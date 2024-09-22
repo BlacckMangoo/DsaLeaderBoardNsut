@@ -1,16 +1,35 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
-import { useAuth } from '../AuthContext'; // Import useAuth
+import { useAuth } from '../AuthContext';
 import './Leaderboard.css';
 
 function Leaderboard() {
-  const { user } = useAuth(); // Get the current user
+  const [leaderboardData, setLeaderboardData] = useState([]);
+  const { user } = useAuth();
 
-  // Placeholder leaderboard data
-  const leaderboardData = [
-    { rank: 1, name: user?.name || 'Anonymous', rollNumber: user?.email || 'N/A', dsaScore: user?.dsaScore || 0 },
-    // Add more placeholder entries if needed
-  ];
+  useEffect(() => {
+    // Load leaderboard data from localStorage
+    const storedData = localStorage.getItem('leaderboardData');
+    let data = storedData ? JSON.parse(storedData) : [];
+
+    // Update or add current user's data
+    if (user && user.dsaScore !== undefined) {
+      const existingUserIndex = data.findIndex(item => item.email === user.email);
+      if (existingUserIndex !== -1) {
+        data[existingUserIndex] = { ...user };
+      } else {
+        data.push(user);
+      }
+    }
+
+    // Sort and assign ranks
+    data.sort((a, b) => b.dsaScore - a.dsaScore);
+    data = data.map((item, index) => ({ ...item, rank: index + 1 }));
+
+    // Update state and localStorage
+    setLeaderboardData(data);
+    localStorage.setItem('leaderboardData', JSON.stringify(data));
+  }, [user]);
 
   return (
     <div className="leaderboard-container">
@@ -21,7 +40,7 @@ function Leaderboard() {
             <tr>
               <th>Rank</th>
               <th>Name</th>
-              <th>Roll Number</th>
+              <th>Email</th>
               <th>Score</th>
             </tr>
           </thead>
@@ -30,7 +49,7 @@ function Leaderboard() {
               <tr key={index}>
                 <td>{user.rank}</td>
                 <td>{user.name}</td>
-                <td>{user.rollNumber}</td>
+                <td>{user.email}</td>
                 <td>{user.dsaScore}</td>
               </tr>
             ))}

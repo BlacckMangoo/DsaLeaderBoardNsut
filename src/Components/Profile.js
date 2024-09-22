@@ -12,7 +12,19 @@ function Profile() {
     e.preventDefault();
     const updatedUser = { ...user, dsaScore: parseInt(dsaScore, 10) };
     login(updatedUser);
-    navigate('/');
+
+    // Update leaderboard data in localStorage
+    const storedData = localStorage.getItem('leaderboardData');
+    let leaderboardData = storedData ? JSON.parse(storedData) : [];
+    const existingUserIndex = leaderboardData.findIndex(item => item.email === user.email);
+    if (existingUserIndex !== -1) {
+      leaderboardData[existingUserIndex] = updatedUser;
+    } else {
+      leaderboardData.push(updatedUser);
+    }
+    localStorage.setItem('leaderboardData', JSON.stringify(leaderboardData));
+
+    navigate('/leaderboard');
   };
 
   if (!user) {

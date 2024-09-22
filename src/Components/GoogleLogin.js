@@ -1,13 +1,16 @@
 import React, { useEffect, useState, useCallback } from 'react';
+import { useNavigate } from 'react-router-dom';
 
 function GoogleLogin({ onLoginSuccess }) {
+  const navigate = useNavigate();
   const [error, setError] = useState(null);
 
+  // Memoize the function to prevent it from being recreated on every render
   const initializeGoogleSignIn = useCallback(() => {
     if (window.google) {
       try {
         window.google.accounts.id.initialize({
-          client_id: '903643545169-tp7412gj0knhg9ec8cfvjh0ho1tlqknb.apps.googleusercontent.com',
+          client_id: '903643545169-tp7412gj0knhg9ec8cfvjh0ho1tlqknb.apps.googleusercontent.com', // Replace with your actual Google Client ID
           callback: handleCredentialResponse,
         });
         window.google.accounts.id.renderButton(
@@ -33,16 +36,18 @@ function GoogleLogin({ onLoginSuccess }) {
       script.defer = true;
       document.body.appendChild(script);
 
-      script.onload = initializeGoogleSignIn;
+      script.onload = initializeGoogleSignIn; // Call the memoized function
       script.onerror = () => setError("Failed to load Google Sign-In script");
     };
 
     loadGoogleScript();
-  }, [initializeGoogleSignIn]);
+  }, [initializeGoogleSignIn]); // Add initializeGoogleSignIn as a dependency
 
   const handleCredentialResponse = (response) => {
+    console.log("Received credential response:", response);
     if (response.credential) {
       const token = response.credential;
+      // Decode the JWT token
       const base64Url = token.split('.')[1];
       const base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');
       const jsonPayload = decodeURIComponent(atob(base64).split('').map(function(c) {
@@ -53,6 +58,7 @@ function GoogleLogin({ onLoginSuccess }) {
 
       if (email.endsWith('@nsut.ac.in')) {
         onLoginSuccess({ email, name });
+        navigate('/profile');
       } else {
         setError('Please use your NSUT email to login.');
       }
