@@ -1,34 +1,37 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
-import Navbar from './components/Navbar';
-import Home from './components/Home';
-import Register from './components/Register';
-import Login from './components/Login';
-import Profile from './components/Profile';
-import Leaderboard from './components/Leaderboard';
-import { AuthProvider } from './contexts/AuthContext';
+import Home from './Components/Home';  // Import the Home component
+import Login from './Components/Login';
+import Leaderboard from './Components/Leaderboard';
 import './App.css';
+
 function App() {
+  const [leaderboardData, setLeaderboardData] = useState([]);
+
+  const addUser = (user) => {
+    const updatedLeaderboard = [...leaderboardData, user].sort((a, b) => b.dsaScore - a.dsaScore);
+    updatedLeaderboard.forEach((user, index) => {
+      user.rank = index + 1;
+    });
+    setLeaderboardData(updatedLeaderboard);
+  };
+
   return (
-    <AuthProvider>
-      <Router>
-        <div className="App">
-          <Navbar />
+    <Router>
+      <div className="App">
+        <header className="App-header">
+          <h1 className="App-title">DSA Leaderboard</h1>
+        </header>
+        <main className="App-content">
           <Routes>
-            <Route path="/" element={<Home />} />
-            <Route path="/register" element={<Register />} />
-            <Route path="/login" element={<Login />} />
-            <Route path="/profile" element={<Profile />} />
-            <Route path="/leaderboard" element={<Leaderboard />} />
+           <Route path="/" element={<Home />} />
+            <Route path="/login" element={<Login addUser={addUser} />} />
+            <Route path="/leaderboard" element={<Leaderboard leaderboardData={leaderboardData} />} />
           </Routes>
-        </div>
-      </Router>
-    </AuthProvider>
+        </main>
+      </div>
+    </Router>
   );
 }
 
 export default App;
-
-
-
-
