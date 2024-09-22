@@ -1,0 +1,78 @@
+.login-container {
+  max-width: 800px;
+  margin: 0 auto;
+  padding: 20px;
+  background-color: #f5f5f5;
+  border-radius: 10px;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+  text-align: center;
+}
+
+.login-container h1 {
+  font-size: 2em;
+  margin-bottom: 20px;
+  color: #282c34;
+}
+
+.login-options {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-top: 20px;
+}
+
+.google-login, .email-login {
+  width: 45%;
+  padding: 20px;
+  background-color: white;
+  border-radius: 5px;
+  box-shadow: 0 0 5px rgba(0, 0, 0, 0.1);
+}
+
+.google-login h2, .email-login h2 {
+  font-size: 1.2em;
+  margin-bottom: 15px;
+}
+
+#googleSignInButton {
+  margin-top: 20px;
+}
+
+.email-login form {
+  display: flex;
+  flex-direction: column;
+}
+
+.email-login input {
+  margin-bottom: 10px;
+  padding: 10px;
+  border: 1px solid #ddd;
+  border-radius: 5px;
+}
+
+.email-login button {
+  background-color: #61dafb;
+  color: white;
+  border: none;
+  padding: 10px;
+  font-size: 1em;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: background-color 0.3s;
+}
+
+.email-login button:hover {
+  background-color: #21a1c9;
+}
+
+.divider {
+  width: 10%;
+  align-self: center;
+  font-weight: bold;
+  color: #282c34;
+}
+
+.login-container p {
+  margin-top: 20px;
+  color: red;
+}
